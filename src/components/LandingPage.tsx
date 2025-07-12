@@ -1,13 +1,16 @@
 
-import React from 'react';
-import { Shield, Cloud, Trophy, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, Cloud, Trophy, Users, LogIn, UserPlus } from 'lucide-react';
 import { Button } from './ui/button';
+import LoginModal from './LoginModal';
 
 interface LandingPageProps {
   onStart: () => void;
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl mx-auto text-center">
@@ -24,6 +27,27 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             <Users className="w-5 h-5" />
             <span className="text-sm font-medium">For Per Scholas Alumni</span>
           </div>
+        </div>
+
+        {/* Auth Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+          <Button
+            onClick={() => setShowLoginModal(true)}
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            <LogIn className="w-5 h-5 mr-2" />
+            Sign In
+          </Button>
+          <Button
+            onClick={() => setShowLoginModal(true)}
+            variant="outline"
+            size="lg"
+            className="border-2 border-white/20 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            <UserPlus className="w-5 h-5 mr-2" />
+            Register
+          </Button>
         </div>
 
         {/* Features Grid */}
@@ -44,9 +68,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
             <Trophy className="w-12 h-12 text-yellow-400 mx-auto mb-3" />
-            <h3 className="text-white font-semibold mb-2">Earn Badges</h3>
+            <h3 className="text-white font-semibold mb-2">Track Progress</h3>
             <p className="text-gray-300 text-sm">
-              Complete the quiz to earn achievement badges and track your progress
+              Save your progress and earn achievement badges as you complete challenges
             </p>
           </div>
         </div>
@@ -63,20 +87,32 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             <div className="text-left">
               <p className="mb-2">• Answer all questions to complete the quiz</p>
               <p className="mb-2">• Get immediate feedback on your answers</p>
-              <p>• Earn badges based on your final score</p>
+              <p>• Progress is saved automatically when logged in</p>
             </div>
           </div>
         </div>
 
-        {/* Start Button */}
-        <Button
-          onClick={onStart}
-          size="lg"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-        >
-          Start Quiz
-        </Button>
+        {/* Quick Start Option */}
+        <div className="space-y-4">
+          <Button
+            onClick={onStart}
+            size="lg"
+            variant="outline"
+            className="border-2 border-gray-400/30 text-gray-300 hover:bg-gray-400/10 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            Try Quiz (Guest Mode)
+          </Button>
+          <p className="text-sm text-gray-400">
+            Sign in to save your progress and access personalized features
+          </p>
+        </div>
       </div>
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSuccess={() => {/* Navigation handled by Index component */}}
+      />
     </div>
   );
 };

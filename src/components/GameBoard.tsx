@@ -1,30 +1,64 @@
 
 import React from 'react';
 import { Category, Question } from '../types/quiz';
-import { Trophy } from 'lucide-react';
+import { Trophy, Home, User } from 'lucide-react';
+import { Button } from './ui/button';
+import { User as UserType } from '../contexts/AuthContext';
 
 interface GameBoardProps {
   categories: Category[];
   answeredQuestions: Set<string>;
   onSelectQuestion: (question: Question) => void;
   score: number;
+  user?: UserType | null;
+  onDashboard?: () => void;
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
   categories,
   answeredQuestions,
   onSelectQuestion,
-  score
+  score,
+  user,
+  onDashboard
 }) => {
   return (
     <div className="min-h-screen p-4">
       {/* Header */}
       <div className="max-w-6xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-4xl font-bold text-white">Cloud & Cyber Showdown</h1>
-          <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            <span className="text-white font-semibold">{score} points</span>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-4xl font-bold text-white">Cloud & Cyber Showdown</h1>
+            {user && (
+              <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1">
+                <User className="w-4 h-4 text-blue-400" />
+                <span className="text-white text-sm">{user.username}</span>
+                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  user.role === 'admin' ? 'bg-red-500/20 text-red-300' :
+                  user.role === 'mentor' ? 'bg-purple-500/20 text-purple-300' :
+                  'bg-blue-500/20 text-blue-300'
+                }`}>
+                  {user.role}
+                </span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            {user && onDashboard && (
+              <Button
+                onClick={onDashboard}
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                <Home className="w-4 h-4 mr-2" />
+                Dashboard
+              </Button>
+            )}
+            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+              <Trophy className="w-5 h-5 text-yellow-400" />
+              <span className="text-white font-semibold">{score} points</span>
+            </div>
           </div>
         </div>
       </div>
@@ -80,6 +114,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 }}
               />
             </div>
+            {user && (
+              <p className="text-gray-300 text-sm mt-2">
+                Progress is automatically saved
+              </p>
+            )}
           </div>
         </div>
       </div>
