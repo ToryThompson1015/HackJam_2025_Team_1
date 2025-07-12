@@ -1,9 +1,11 @@
 
-import React from 'react';
-import { Trophy, Users, BookOpen, BarChart3, Settings, LogOut, Play } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, Users, BookOpen, BarChart3, Settings, LogOut, Play, Award } from 'lucide-react';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { useAuth } from '../contexts/AuthContext';
+import UserManagement from './UserManagement';
+import BadgeShowcase from './BadgeShowcase';
 
 interface DashboardProps {
   onStartQuiz: () => void;
@@ -11,14 +13,27 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
   const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
 
   if (!user) return null;
 
-  const totalQuestions = 10; // 2 categories × 5 questions each
+  const totalQuestions = 35; // 7 categories × 5 questions each
   const completedQuestions = user.progress?.completedQuestions.length || 0;
   const progressPercentage = (completedQuestions / totalQuestions) * 100;
 
   const getDashboardContent = () => {
+    if (user.role === 'admin' && activeTab === 'users') {
+      return <UserManagement />;
+    }
+
+    if (user.role === 'user' && activeTab === 'badges') {
+      return (
+        <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 min-h-screen p-4 -m-4">
+          <BadgeShowcase />
+        </div>
+      );
+    }
+
     switch (user.role) {
       case 'admin':
         return (
@@ -127,21 +142,37 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
               </div>
             </div>
 
-            {progressPercentage > 0 && (
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                <h3 className="text-white font-semibold mb-3">Continue Learning</h3>
-                <p className="text-gray-300 mb-4">
-                  You're doing great! {completedQuestions > 0 ? 'Continue where you left off' : 'Start your learning journey'}.
-                </p>
-                <Button
-                  onClick={onStartQuiz}
-                  className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
-                >
-                  <Play className="w-4 h-4" />
-                  <span>{completedQuestions > 0 ? 'Continue Quiz' : 'Start Quiz'}</span>
-                </Button>
-              </div>
-            )}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <h3 className="text-white font-semibold mb-3">Continue Learning</h3>
+              <p className="text-gray-300 mb-4">
+                Explore 7 technology domains: AWS, Cybersecurity, Python, Java, AI, Data Engineering, and Crypto.
+              </p>
+              <Button
+                onClick={onStartQuiz}
+                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
+              >
+                <Play className="w-4 h-4" />
+                <span>{completedQuestions > 0 ? 'Continue Quiz' : 'Start Quiz'}</span>
+              </Button>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <h3 className="text-white font-semibold mb-3 flex items-center">
+                <Award className="w-5 h-5 mr-2 text-yellow-400" />
+                Achievement Progress
+              </h3>
+              <p className="text-gray-300 mb-4">
+                You're on track to earn amazing badges! Check out all available achievements.
+              </p>
+              <Button
+                onClick={() => setActiveTab('badges')}
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                <Award className="w-4 h-4 mr-2" />
+                View All Badges
+              </Button>
+            </div>
           </div>
         );
     }
@@ -186,6 +217,39 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
               Logout
             </Button>
           </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex space-x-4 mb-6">
+          <Button
+            onClick={() => setActiveTab('overview')}
+            variant={activeTab === 'overview' ? 'default' : 'outline'}
+            className={activeTab === 'overview' ? '' : 'border-white/20 text-white hover:bg-white/10'}
+          >
+            Overview
+          </Button>
+          
+          {user.role === 'admin' && (
+            <Button
+              onClick={() => setActiveTab('users')}
+              variant={activeTab === 'users' ? 'default' : 'outline'}
+              className={activeTab === 'users' ? '' : 'border-white/20 text-white hover:bg-white/10'}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              User Management
+            </Button>
+          )}
+          
+          {user.role === 'user' && (
+            <Button
+              onClick={() => setActiveTab('badges')}
+              variant={activeTab === 'badges' ? 'default' : 'outline'}
+              className={activeTab === 'badges' ? '' : 'border-white/20 text-white hover:bg-white/10'}
+            >
+              <Award className="w-4 h-4 mr-2" />
+              Badges
+            </Button>
+          )}
         </div>
 
         {/* Dashboard Content */}
