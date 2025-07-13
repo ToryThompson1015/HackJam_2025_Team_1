@@ -43,7 +43,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             onClick={() => setShowLoginModal(true)}
             variant="outline"
             size="lg"
-            className="border-2 border-white/20 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            className="border-2 border-blue-400 text-blue-300 hover:bg-blue-400/10 hover:text-blue-200 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             <UserPlus className="w-5 h-5 mr-2" />
             Register
@@ -98,7 +98,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             onClick={onStart}
             size="lg"
             variant="outline"
-            className="border-2 border-gray-400/30 text-gray-300 hover:bg-gray-400/10 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            className="border-2 border-gray-300 text-gray-200 hover:bg-gray-300/10 hover:text-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             Try Quiz (Guest Mode)
           </Button>
