@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Trophy, Users, BookOpen, BarChart3, Settings, LogOut, Play, Award } from 'lucide-react';
+import { Trophy, Users, BookOpen, BarChart3, Settings, LogOut, Play, Award, ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,9 +8,10 @@ import BadgeShowcase from './BadgeShowcase';
 
 interface DashboardProps {
   onStartQuiz: () => void;
+  onBackToLanding: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz, onBackToLanding }) => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -20,6 +20,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
   const totalQuestions = 35; // 7 categories × 5 questions each
   const completedQuestions = user.progress?.completedQuestions.length || 0;
   const progressPercentage = (completedQuestions / totalQuestions) * 100;
+
+  const handleLogout = () => {
+    logout();
+    onBackToLanding();
+  };
 
   const getDashboardContent = () => {
     if (user.role === 'admin' && activeTab === 'users') {
@@ -167,7 +172,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
               <Button
                 onClick={() => setActiveTab('badges')}
                 variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="border-yellow-400 text-yellow-300 hover:bg-yellow-400/10 hover:text-yellow-200"
               >
                 <Award className="w-4 h-4 mr-2" />
                 View All Badges
@@ -183,35 +188,45 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome back, {user.username}!
-            </h1>
-            <div className="flex items-center space-x-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                user.role === 'admin' ? 'bg-red-500/20 text-red-300' :
-                user.role === 'mentor' ? 'bg-purple-500/20 text-purple-300' :
-                'bg-blue-500/20 text-blue-300'
-              }`}>
-                {user.role.toUpperCase()}
-              </span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-300 text-sm">Cloud & Cyber Showdown</span>
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={onBackToLanding}
+              variant="outline"
+              className="border-gray-400 text-gray-300 hover:bg-gray-400/10 hover:text-gray-200"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Welcome back, {user.username}!
+              </h1>
+              <div className="flex items-center space-x-2">
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  user.role === 'admin' ? 'bg-red-500/20 text-red-300' :
+                  user.role === 'mentor' ? 'bg-purple-500/20 text-purple-300' :
+                  'bg-blue-500/20 text-blue-300'
+                }`}>
+                  {user.role.toUpperCase()}
+                </span>
+                <span className="text-gray-400">•</span>
+                <span className="text-gray-300 text-sm">Cloud & Cyber Showdown</span>
+              </div>
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
             <Button
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-blue-400 text-blue-300 hover:bg-blue-400/10 hover:text-blue-200"
             >
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>
             <Button
-              onClick={logout}
+              onClick={handleLogout}
               variant="outline"
-              className="border-red-300/20 text-red-300 hover:bg-red-500/10"
+              className="border-red-400 text-red-300 hover:bg-red-400/10 hover:text-red-200"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -224,7 +239,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
           <Button
             onClick={() => setActiveTab('overview')}
             variant={activeTab === 'overview' ? 'default' : 'outline'}
-            className={activeTab === 'overview' ? '' : 'border-white/20 text-white hover:bg-white/10'}
+            className={activeTab === 'overview' ? 'bg-blue-600 text-white' : 'border-blue-400 text-blue-300 hover:bg-blue-400/10 hover:text-blue-200'}
           >
             Overview
           </Button>
@@ -233,7 +248,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
             <Button
               onClick={() => setActiveTab('users')}
               variant={activeTab === 'users' ? 'default' : 'outline'}
-              className={activeTab === 'users' ? '' : 'border-white/20 text-white hover:bg-white/10'}
+              className={activeTab === 'users' ? 'bg-blue-600 text-white' : 'border-purple-400 text-purple-300 hover:bg-purple-400/10 hover:text-purple-200'}
             >
               <Users className="w-4 h-4 mr-2" />
               User Management
@@ -244,7 +259,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartQuiz }) => {
             <Button
               onClick={() => setActiveTab('badges')}
               variant={activeTab === 'badges' ? 'default' : 'outline'}
-              className={activeTab === 'badges' ? '' : 'border-white/20 text-white hover:bg-white/10'}
+              className={activeTab === 'badges' ? 'bg-blue-600 text-white' : 'border-yellow-400 text-yellow-300 hover:bg-yellow-400/10 hover:text-yellow-200'}
             >
               <Award className="w-4 h-4 mr-2" />
               Badges

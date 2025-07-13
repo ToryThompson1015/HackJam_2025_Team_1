@@ -89,12 +89,16 @@ const Index = () => {
     setGameState('dashboard');
   };
 
+  const goToLanding = () => {
+    setGameState('landing');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900">
       {gameState === 'landing' && <LandingPage onStart={startGame} />}
       
       {gameState === 'dashboard' && user && (
-        <Dashboard onStartQuiz={startGame} />
+        <Dashboard onStartQuiz={startGame} onBackToLanding={goToLanding} />
       )}
       
       {gameState === 'playing' && (
@@ -106,6 +110,7 @@ const Index = () => {
             score={score}
             user={user}
             onDashboard={goToDashboard}
+            onBackToLanding={goToLanding}
           />
           
           {showModal && currentQuestion && (
