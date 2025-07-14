@@ -1,73 +1,154 @@
-# Welcome to your Lovable project
 
-## Project info
+  Cloud Cyber Showdown Quiz – Technical Documentation
 
-**URL**: https://lovable.dev/projects/da8842eb-2769-4cf6-b049-e6889ed73d14
+   Overview
 
-## How can I edit this code?
+Cloud Cyber Showdown Quiz is a gamified, quiz-based web application designed to help users (students, mentors, admins) learn and track progress in technology domains such as AWS, Cybersecurity, Python, Java, AI, Data Engineering, and Crypto. The platform features user authentication, role-based dashboards, a quiz gameboard, progress tracking, and achievement badges.
 
-There are several ways of editing your application.
+   Tech Stack
 
-**Use Lovable**
+-  Frontend Framework:  React (with Vite for fast development)
+-  Styling:  Tailwind CSS, shadcn-ui (Radix UI primitives)
+-  Type Checking:  TypeScript
+-  State Management:  React Context API (for authentication and user state)
+-  Data Fetching/Caching:  @tanstack/react-query
+-  Routing:  react-router-dom
+-  Charts/Visualization:  recharts
+-  Other Libraries:  lucide-react (icons), date-fns, embla-carousel-react, zod (validation), react-hook-form
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/da8842eb-2769-4cf6-b049-e6889ed73d14) and start prompting.
+<img width="834" height="444" alt="Cloud Cyber Showdown Quiz – Technical Documentation - visual selection (1)" src="https://github.com/user-attachments/assets/29543cfa-09ff-4c97-9b89-7f92eff9252b" />
 
-Changes made via Lovable will be committed automatically to this repo.
+   Project Structure
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+cloud-cyber-showdown-quiz/
+│
+├── public/                  Static assets
+├── src/
+│   ├── components/          Main UI components (Dashboard, GameBoard, etc.)
+│   │   └── ui/              Reusable UI primitives (Button, Modal, Toast, etc.)
+│   ├── contexts/            React Contexts (AuthContext)
+│   ├── data/                Static/mock data (quizData.ts)
+│   ├── hooks/               Custom React hooks
+│   ├── lib/                 Utility functions
+│   ├── pages/               Top-level pages (Index, NotFound)
+│   ├── types/               TypeScript type definitions
+│   ├── App.tsx              Main app component (routing, providers)
+│   ├── main.tsx             React entry point
+│   └── index.css            Global styles
+├── package.json             Project metadata and dependencies
+├── tailwind.config.ts       Tailwind CSS configuration
+├── vite.config.ts           Vite configuration
+└── README.md                Project overview and setup
 ```
 
-**Edit a file directly in GitHub**
+   Core Features & Technical Details
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+    1. Authentication & User Roles
 
-**Use GitHub Codespaces**
+- AuthContext  manages authentication state and user roles (`admin`, `user`, `mentor`).
+- Demo users are hardcoded for local testing.
+- User progress is persisted in `localStorage` (per user).
+- The context provides:
+  - `login(username, password)`
+  - `logout()`
+  - `updateProgress(completedQuestions, score)`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+    2. Routing & App Structure
 
-## What technologies are used for this project?
+-  App.tsx  wraps the app in providers:
+  - `QueryClientProvider` (react-query)
+  - `TooltipProvider` (UI tooltips)
+  - `AuthProvider` (authentication)
+  - `BrowserRouter` (routing)
+- Main routes:
+  - `/` → `Index` (main game/landing/dashboard)
+  - `*` → `NotFound`
 
-This project is built with:
+    3. Main Page Logic (`Index.tsx`)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Manages the game state: `'landing' | 'dashboard' | 'playing' | 'results'`
+- Handles quiz flow:
+  - Landing page → Dashboard (if logged in) → GameBoard (quiz) → ResultsPage
+- Tracks score, answered questions, and current question.
+- Integrates with AuthContext to persist progress.
 
-## How can I deploy this project?
+    4. Dashboard
 
-Simply open [Lovable](https://lovable.dev/projects/da8842eb-2769-4cf6-b049-e6889ed73d14) and click on Share -> Publish.
+-  Dashboard.tsx  displays different content based on user role:
+  -  Admin:  User management, analytics, system overview.
+  -  Mentor:  Student progress, recent activity.
+  -  User:  Progress bar, score, achievements, continue/start quiz.
+- Uses shadcn-ui and Tailwind for a modern, responsive UI.
 
-## Can I connect a custom domain to my Lovable project?
+    5. Quiz Game
 
-Yes, you can!
+-  GameBoard.tsx : Displays categories and questions (Jeopardy-style).
+-  QuestionModal.tsx : Modal for answering questions.
+-  ResultsPage.tsx : Shows final score and allows restarting.
+-  quizData.ts : Contains all quiz questions, organized by category.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+    6. Achievements & Badges
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+-  BadgeShowcase.tsx : Displays earned and available badges.
+- Progress and achievements are tracked and shown in the dashboard.
+
+    7. UI Components
+
+-  Reusable UI primitives  in `src/components/ui/` (Button, Modal, Toast, Table, etc.) built on Radix UI and shadcn-ui.
+-  Toaster  and  Sonner  for notifications.
+-  Lucide-react  for icons.
+
+    8. TypeScript Types
+
+-  Question, Category, QuizData  defined in `src/types/quiz.ts` for strong typing.
+- User and Auth types in `src/contexts/AuthContext.tsx`.
+
+    9. Data & State
+
+- All quiz data is static (in `quizData.ts`), but the structure supports easy migration to a backend API.
+- User progress and session state are managed in React state and persisted to `localStorage`.
+
+    10. Development & Build
+
+-  Vite  for fast local development and builds.
+-  Tailwind CSS  for utility-first styling.
+-  ESLint  and  TypeScript  for code quality.
+
+   How to Run Locally
+
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open `http://localhost:5173` in your browser.
+
+   Extensibility & Future Improvements
+
+-  Backend Integration:  Easily connect to a real backend for user management, quiz data, and analytics.
+-  Real Authentication:  Replace demo users with OAuth/JWT or Firebase Auth.
+-  More Gamification:  Add leaderboards, more badge types, and social features.
+-  AI Integration:  Personalized quiz recommendations, smart mentorship matching, or automated feedback.
+<img width="900" height="864" alt="Cloud Cyber Showdown Quiz – Technical Documentation - visual selection" src="https://github.com/user-attachments/assets/20be58ee-5e9d-44e6-85dd-18f12104b246" />
+
+   Security Considerations
+
+- Current authentication is for demo only; do not use in production.
+- All data is stored in localStorage; sensitive data should be handled securely in a real deployment.
+
+   References
+
+- [shadcn/ui documentation](https://ui.shadcn.com/)
+- [Radix UI Primitives](https://www.radix-ui.com/primitives/docs/overview/introduction)
+- [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Query](https://tanstack.com/query/latest)
+
+---
+
+If you need a more detailed breakdown of any specific component, data model, or flow, let me know!
