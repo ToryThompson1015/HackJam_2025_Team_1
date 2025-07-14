@@ -1,3 +1,5 @@
+Access the application by clicking this link: https://cloud-cyber-showdown-quiz.lovable.app/
+
 
   Cloud Cyber Showdown Quiz – Technical Documentation
 
