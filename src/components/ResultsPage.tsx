@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Trophy, Award, Star, RotateCcw, Sparkles, Zap } from 'lucide-react';
+import { Trophy, Award, Star, RotateCcw } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface ResultsPageProps {
@@ -53,21 +53,11 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ score, totalQuestions, onRest
   const BadgeIcon = badgeInfo.icon;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Sparkles className="absolute top-20 left-20 w-6 h-6 text-yellow-400 animate-bounce" style={{ animationDelay: '0s' }} />
-        <Sparkles className="absolute top-32 right-32 w-4 h-4 text-blue-400 animate-bounce" style={{ animationDelay: '1s' }} />
-        <Sparkles className="absolute bottom-32 left-32 w-5 h-5 text-green-400 animate-bounce" style={{ animationDelay: '2s' }} />
-        <Sparkles className="absolute bottom-20 right-20 w-4 h-4 text-purple-400 animate-bounce" style={{ animationDelay: '3s' }} />
-        <Zap className="absolute top-1/2 left-10 w-6 h-6 text-yellow-500 animate-pulse" />
-        <Zap className="absolute top-1/3 right-10 w-5 h-5 text-pink-500 animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-
-      <div className="max-w-2xl mx-auto text-center relative z-10">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-2xl mx-auto text-center">
         {/* Header */}
-        <div className="mb-8 animate-fade-in">
-          <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             🎉 Quiz Complete! 🎉
           </h1>
           <p className="text-xl text-gray-300">
@@ -76,58 +66,52 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ score, totalQuestions, onRest
         </div>
 
         {/* Score Card */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white/20 animate-scale-in relative overflow-hidden">
-          {/* Animated background glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 animate-pulse"></div>
-          
-          <div className="relative z-10">
-            {/* Badge */}
-            <div className={`inline-flex items-center space-x-3 ${badgeInfo.bgColor} rounded-full px-6 py-3 mb-6 animate-bounce border-2 border-white/20`}>
-              <BadgeIcon className={`w-8 h-8 ${badgeInfo.color} animate-pulse`} />
-              <span className="text-white font-bold text-xl">{badgeInfo.title}</span>
-              <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
-            </div>
-
-            {/* Score */}
-            <div className="mb-6">
-              <div className="text-6xl font-bold text-white mb-2 animate-pulse bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                {score}
-              </div>
-              <div className="text-gray-300 text-lg">
-                out of {maxScore} points
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 h-4 rounded-full transition-all duration-2000 ease-out animate-pulse"
-                style={{ width: `${percentage}%` }}
-              />
-            </div>
-            <div className="text-white text-lg font-semibold mb-4 animate-fade-in">
-              {percentage.toFixed(1)}% Complete
-            </div>
-
-            {/* Badge Description */}
-            <p className="text-gray-300 text-lg animate-fade-in">
-              {badgeInfo.description}
-            </p>
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white/20">
+          {/* Badge */}
+          <div className={`inline-flex items-center space-x-3 ${badgeInfo.bgColor} rounded-full px-6 py-3 mb-6 border-2 border-white/20`}>
+            <BadgeIcon className={`w-8 h-8 ${badgeInfo.color}`} />
+            <span className="text-white font-bold text-xl">{badgeInfo.title}</span>
           </div>
+
+          {/* Score */}
+          <div className="mb-6">
+            <div className="text-6xl font-bold text-white mb-2 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+              {score}
+            </div>
+            <div className="text-gray-300 text-lg">
+              out of {maxScore} points
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 h-4 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+          <div className="text-white text-lg font-semibold mb-4">
+            {percentage.toFixed(1)}% Complete
+          </div>
+
+          {/* Badge Description */}
+          <p className="text-gray-300 text-lg">
+            {badgeInfo.description}
+          </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 animate-fade-in hover:bg-white/10 transition-all duration-300">
-            <div className="text-2xl font-bold text-white animate-pulse">{totalQuestions}</div>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-200">
+            <div className="text-2xl font-bold text-white">{totalQuestions}</div>
             <div className="text-gray-300 text-sm">Questions</div>
           </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 animate-fade-in hover:bg-white/10 transition-all duration-300" style={{ animationDelay: '0.1s' }}>
-            <div className="text-2xl font-bold text-blue-400 animate-pulse">{Math.round(percentage)}%</div>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-200">
+            <div className="text-2xl font-bold text-blue-400">{Math.round(percentage)}%</div>
             <div className="text-gray-300 text-sm">Accuracy</div>
           </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 animate-fade-in hover:bg-white/10 transition-all duration-300" style={{ animationDelay: '0.2s' }}>
-            <div className="text-2xl font-bold text-green-400 animate-pulse">7</div>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-200">
+            <div className="text-2xl font-bold text-green-400">7</div>
             <div className="text-gray-300 text-sm">Categories</div>
           </div>
         </div>
@@ -137,19 +121,19 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ score, totalQuestions, onRest
           <Button
             onClick={onRestart}
             size="lg"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounce"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
           >
-            <RotateCcw className="w-5 h-5 mr-2 animate-spin" />
+            <RotateCcw className="w-5 h-5 mr-2" />
             🚀 Play Again
           </Button>
           
-          <div className="text-gray-400 text-sm animate-fade-in">
+          <div className="text-gray-400 text-sm">
             ✨ Challenge your friends and share your results! ✨
           </div>
         </div>
 
         {/* Per Scholas Branding */}
-        <div className="mt-8 text-center animate-fade-in">
+        <div className="mt-8 text-center">
           <p className="text-gray-400 text-sm">
             💼 Made for Per Scholas Alumni 💼
           </p>
