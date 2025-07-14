@@ -1,45 +1,138 @@
 
-import React, { useState } from 'react';
-import { Bot, MessageCircle, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bot, MessageCircle, X, Brain, Target, TrendingUp } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface AgenticBotProps {
   onHint?: (hint: string) => void;
+  score?: number;
+  totalQuestions?: number;
+  answeredQuestions?: number;
+  currentCategory?: string;
+  recentAnswers?: { correct: boolean; category: string }[];
 }
 
-const AgenticBot: React.FC<AgenticBotProps> = ({ onHint }) => {
+const AgenticBot: React.FC<AgenticBotProps> = ({ 
+  onHint, 
+  score = 0, 
+  totalQuestions = 0, 
+  answeredQuestions = 0, 
+  currentCategory = "", 
+  recentAnswers = [] 
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<string[]>([
-    "Hi! I'm your AI quiz assistant. I can help you with hints and encouragement!"
+    "Hi! I'm your virtual mentor. I'm here to guide your learning journey and help you excel! 🎓"
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const [mentorMode, setMentorMode] = useState<'encouragement' | 'strategy' | 'progress'>('encouragement');
 
-  const botResponses = [
-    "Great job! Keep going strong! 💪",
-    "Remember to read each question carefully.",
-    "Take your time - accuracy is more important than speed.",
-    "You're doing amazing! Every question is a learning opportunity.",
-    "Hint: Think about the fundamentals of the topic.",
-    "Consider the most common practices in this field.",
-    "Break down complex problems into smaller parts.",
-    "You've got this! Trust your knowledge.",
-  ];
+  const getMentorResponse = () => {
+    const accuracy = answeredQuestions > 0 ? (score / (answeredQuestions * 100)) * 100 : 0;
+    const recentCorrect = recentAnswers.slice(-3).filter(a => a.correct).length;
+    const recentTotal = recentAnswers.slice(-3).length;
+
+    // Progress-based responses
+    if (mentorMode === 'progress') {
+      if (answeredQuestions === 0) {
+        return "Ready to start your learning journey? Remember, every expert was once a beginner. Let's tackle this together! 🚀";
+      }
+      if (accuracy >= 80) {
+        return `Excellent work! You're maintaining ${accuracy.toFixed(0)}% accuracy. Your understanding is clearly strong. Keep this momentum! 🌟`;
+      }
+      if (accuracy >= 60) {
+        return `Good progress at ${accuracy.toFixed(0)}% accuracy. You're on the right track. Focus on the fundamentals and you'll improve! 📈`;
+      }
+      return `Don't worry about the ${accuracy.toFixed(0)}% accuracy. Learning is a process. Each mistake teaches us something valuable. Let's focus on understanding! 💪`;
+    }
+
+    // Strategy-based responses
+    if (mentorMode === 'strategy') {
+      const categoryTips = {
+        'Cloud Computing': 'Focus on service models (IaaS, PaaS, SaaS) and deployment types. Think about real-world scenarios.',
+        'DevOps': 'Remember the CI/CD pipeline stages and automation principles. Consider how tools integrate together.',
+        'Cybersecurity': 'Think about the CIA triad: Confidentiality, Integrity, Availability. Consider threats and countermeasures.',
+        'Networking': 'Visualize the OSI model layers and how data flows. Think about protocols and their purposes.',
+        'Containers': 'Remember containerization vs virtualization differences. Think about orchestration and scaling.',
+        'Monitoring': 'Focus on metrics, logs, and traces. Consider what to monitor and how to respond to alerts.',
+        'Infrastructure': 'Think about scalability, reliability, and cost optimization. Consider infrastructure as code principles.'
+      };
+      
+      if (currentCategory && categoryTips[currentCategory as keyof typeof categoryTips]) {
+        return `💡 ${currentCategory} Strategy: ${categoryTips[currentCategory as keyof typeof categoryTips]}`;
+      }
+      
+      if (recentTotal >= 2 && recentCorrect === 0) {
+        return "Try a different approach: Read each option carefully, eliminate obviously wrong answers, then choose the best remaining option. 🎯";
+      }
+      
+      return "Study tip: Connect new concepts to what you already know. Create mental models and practice explaining concepts in your own words. 🧠";
+    }
+
+    // Encouragement-based responses
+    if (recentTotal >= 3 && recentCorrect >= 2) {
+      return "You're on fire! 🔥 Your recent answers show great understanding. Trust your knowledge and keep going!";
+    }
+    
+    if (recentTotal >= 2 && recentCorrect === 0) {
+      return "Every challenge is a chance to grow! 🌱 Take a breath, review the fundamentals, and approach this systematically.";
+    }
+    
+    if (answeredQuestions >= 5 && accuracy >= 70) {
+      return "Your consistent performance shows real mastery! 🏆 You're building solid expertise in this field.";
+    }
+    
+    const encouragementResponses = [
+      "Remember: You're not just memorizing - you're building expertise that will serve your career! 🎯",
+      "Each question you answer correctly builds your confidence. You're getting stronger! 💪",
+      "Learning is like building muscle - consistency beats intensity. Keep going! 🏋️‍♂️",
+      "Your curiosity and persistence are your greatest assets. Trust the process! 🌟",
+      "Think like a professional solving real problems. What would you do in the workplace? 💼",
+      "Break complex problems into smaller parts. You've got the skills to figure this out! 🔍"
+    ];
+    
+    return encouragementResponses[Math.floor(Math.random() * encouragementResponses.length)];
+  };
 
   const addBotMessage = (message: string) => {
     setIsTyping(true);
     setTimeout(() => {
       setMessages(prev => [...prev, message]);
       setIsTyping(false);
-    }, 1000);
+    }, 1500);
   };
 
-  const handleGetHint = () => {
-    const randomHint = botResponses[Math.floor(Math.random() * botResponses.length)];
-    addBotMessage(randomHint);
+  const handleMentorAdvice = (mode: 'encouragement' | 'strategy' | 'progress') => {
+    setMentorMode(mode);
+    const advice = getMentorResponse();
+    addBotMessage(advice);
     if (onHint) {
-      onHint(randomHint);
+      onHint(advice);
     }
   };
+
+  // Auto-mentor based on performance
+  useEffect(() => {
+    if (recentAnswers.length > 0) {
+      const lastAnswer = recentAnswers[recentAnswers.length - 1];
+      const recentCorrect = recentAnswers.slice(-3).filter(a => a.correct).length;
+      const recentTotal = recentAnswers.slice(-3).length;
+      
+      // Auto-encourage after 3 wrong in a row
+      if (recentTotal >= 3 && recentCorrect === 0) {
+        setTimeout(() => {
+          addBotMessage("I notice you're facing some challenges. Remember, this is how we learn and grow! Let me help you with a strategy. 🤝");
+        }, 2000);
+      }
+      
+      // Auto-celebrate good streaks
+      if (recentTotal >= 3 && recentCorrect === 3) {
+        setTimeout(() => {
+          addBotMessage("Amazing streak! 🎉 You're really mastering these concepts. Your hard work is paying off!");
+        }, 1000);
+      }
+    }
+  }, [recentAnswers]);
 
   return (
     <>
@@ -89,14 +182,33 @@ const AgenticBot: React.FC<AgenticBotProps> = ({ onHint }) => {
           </div>
 
           {/* Actions */}
-          <div className="p-4 border-t border-gray-200/50">
-            <Button
-              onClick={handleGetHint}
-              className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Get Hint
-            </Button>
+          <div className="p-4 border-t border-gray-200/50 space-y-2">
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                onClick={() => handleMentorAdvice('encouragement')}
+                size="sm"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-xs"
+              >
+                <MessageCircle className="w-3 h-3 mr-1" />
+                Encourage
+              </Button>
+              <Button
+                onClick={() => handleMentorAdvice('strategy')}
+                size="sm"
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-xs"
+              >
+                <Brain className="w-3 h-3 mr-1" />
+                Strategy
+              </Button>
+              <Button
+                onClick={() => handleMentorAdvice('progress')}
+                size="sm"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs"
+              >
+                <TrendingUp className="w-3 h-3 mr-1" />
+                Progress
+              </Button>
+            </div>
           </div>
         </div>
       )}

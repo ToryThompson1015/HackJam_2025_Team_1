@@ -108,7 +108,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
       </div>
 
       {/* Agentic Bot */}
-      <AgenticBot />
+      <AgenticBot 
+        score={score}
+        answeredQuestions={answeredQuestions.size}
+        totalQuestions={categories.reduce((total, cat) => total + cat.questions.length, 0)}
+      />
     </div>
   );
 };
